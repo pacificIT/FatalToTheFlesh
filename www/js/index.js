@@ -24,6 +24,7 @@ var app = {
     context = canvas.getContext('2d');
     context.strokeStyle="#FF0000";
     context.fillStyle="#FF0000";
+    context.translate(0.5, 0.5);
   }
 };
 
@@ -59,15 +60,14 @@ function move(e) {
       console.log(length);
       var midx = x[id] + (newx - x[id])/2;
       var midy = y[id] + (newy - y[id])/2;
-      var width = length / 50;
-      var controlx = -1 * dy / length;
-      var controly = dx / length;
+      var width = length / 20;
+      var controlx = -1 * width * dy / length;
+      var controly = width * dx / length;
       
+      context.beginPath();
       context.moveTo(x[id], y[id]);
-      context.lineTo(midx + controlx * width, midy + controly * width);
-      context.lineTo(newx, newy);
-      context.lineTo(midx - controlx * width, midy - controly * width);
-      context.lineTo(x[id], y[id]);
+      context.quadraticCurveTo(midx + controlx, midy + controly, newx, newy);
+      context.quadraticCurveTo(midx - controlx, midy - controly, x[id], y[id]);
       context.stroke();
       context.fill()
       
