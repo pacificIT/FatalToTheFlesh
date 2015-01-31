@@ -23,6 +23,7 @@ var app = {
     document.body.style.backgroundColor = '#FFFFFF';
     context = canvas.getContext('2d');
     context.strokeStyle="#FF0000";
+    context.fillStyle="#FF0000";
   }
 };
 
@@ -48,12 +49,27 @@ function move(e) {
     var newx = e.targetTouches[i].clientX;
     var newy = e.targetTouches[i].clientY;
     
-    if(Math.pow(x[id] - newx, 2) + Math.pow(y[id] - newy, 2) > 8100)
+    var dx = x[id] - newx;
+    var dy = y[id] - newy;
+    
+    
+    var length = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+    if(length > 125)
     {
-      console.log(Math.pow(x[id] - newx, 2) + Math.pow(y[id] - newy, 2));
+      console.log(length);
+      var midx = x[id] + (newx - x[id])/2;
+      var midy = y[id] + (newy - y[id])/2;
+      var width = length / 50;
+      var controlx = -1 * dy / length;
+      var controly = dx / length;
+      
       context.moveTo(x[id], y[id]);
+      context.lineTo(midx + controlx * width, midy + controly * width);
       context.lineTo(newx, newy);
+      context.lineTo(midx - controlx * width, midy - controly * width);
+      context.lineTo(x[id], y[id]);
       context.stroke();
+      context.fill()
       
       x[id] = newx;
       y[id] = newy;
