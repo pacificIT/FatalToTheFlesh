@@ -2,6 +2,7 @@ var canvas;
 var context;
 
 var app = {
+  // Setting up stuff. Not sure how it really works though
   initialize: function() {
     this.bindEvents();
   },
@@ -10,32 +11,38 @@ var app = {
   },
   onDeviceReady: function() {
     
+    // Touch events to be registered
     document.body.ontouchstart = down;
     document.body.ontouchmove = move;
-    // = document.body.onmspointerdown
-    //document.body.onmousedown = 
     
+    // Fill entire screen with canvas
     canvas = $('canvas');
-    context = canvas.getContext('2d');
-    
     canvas.height = window.screen.availHeight;
     canvas.width = window.screen.availWidth;
+    
+    // Change background to white, to know the app is ready
     document.body.style.backgroundColor = '#FFFFFF';
+    
+    // Nice read colors and such
     context = canvas.getContext('2d');
     context.strokeStyle="#FF0000";
     context.fillStyle="#FF0000";
+    
+    // Anti-aliasing
     context.translate(0.5, 0.5);
   }
 };
 
+// Shorthand
 function $(id) {
    return document.getElementById(id);
 }
 
-
+// Array of coordinates, indexed by the touchevent identifier.
 var x = [];
 var y = [];
 
+// Register initial positions
 function down(e) {
   for(i = 0; i < e.targetTouches.length; i++)
   {
@@ -43,6 +50,7 @@ function down(e) {
     y[e.targetTouches[i].identifier] = e.targetTouches[i].clientY;
   }
 }
+
 function move(e) {
   for(i = 0; i < e.targetTouches.length; i++)
   {
@@ -55,9 +63,12 @@ function move(e) {
     
     
     var length = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+    
+    // Minimum cut length, because the original also has that
     if(length > 125)
     {
-      console.log(length);
+      
+      // Makes 2 quadratic bezier curves between the endpoints, and color the area red
       var midx = x[id] + (newx - x[id])/2;
       var midy = y[id] + (newy - y[id])/2;
       var width = length / 20;
@@ -71,6 +82,7 @@ function move(e) {
       context.stroke();
       context.fill()
       
+      // Remember endpoint for next line
       x[id] = newx;
       y[id] = newy;
     }
