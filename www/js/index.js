@@ -111,7 +111,9 @@ function up(e) {
     var midx = x[id] + dx/2;
     var midy = y[id] + dy/2;
     var length = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-    var width = length / 20;
+    var width = length / 75;
+    if(width > 7)
+      width = 7;
     
     var controlx = -1 * width * dy / length;
     var controly = width * dx / length;
