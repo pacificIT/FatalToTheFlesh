@@ -14,6 +14,7 @@ var app = {
     // Touch events to be registered
     document.body.ontouchstart = down;
     document.body.ontouchmove = move;
+    document.body.ontouchend = up;
     
     // Fill entire screen with canvas
     canvas = $('canvas');
@@ -43,15 +44,21 @@ var x = [];
 var y = [];
 
 // Register initial positions
-function down(e) {
+function down(e) {/*
   for(i = 0; i < e.targetTouches.length; i++)
   {
     x[e.targetTouches[i].identifier] = e.targetTouches[i].clientX;
     y[e.targetTouches[i].identifier] = e.targetTouches[i].clientY;
+  }*/
+  for(i = 0; i < e.changedTouches.length; i++)
+  {
+    x[e.changedTouches[i].identifier] = e.changedTouches[i].clientX;
+    y[e.changedTouches[i].identifier] = e.changedTouches[i].clientY;
   }
 }
 
 function move(e) {
+  /*
   for(i = 0; i < e.targetTouches.length; i++)
   {
     var id = e.targetTouches[i].identifier;
@@ -86,6 +93,34 @@ function move(e) {
       x[id] = newx;
       y[id] = newy;
     }
+  }
+    */
+}
+
+function up(e) {
+  for(i = 0; i < e.changedTouches.length; i++)
+  {
+    var id = e.changedTouches[i].identifier;
+    var newx = e.changedTouches[i].clientX;
+    var newy = e.changedTouches[i].clientY;
     
+      
+    // Makes 2 quadratic bezier curves between the endpoints, and color the area red
+    var dx = newx - x[id];
+    var dy = newy - y[id];
+    var midx = x[id] + dx/2;
+    var midy = y[id] + dy/2;
+    var length = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+    var width = length / 20;
+    
+    var controlx = -1 * width * dy / length;
+    var controly = width * dx / length;
+    
+    context.beginPath();
+    context.moveTo(x[id], y[id]);
+    context.quadraticCurveTo(midx + controlx, midy + controly, newx, newy);
+    context.quadraticCurveTo(midx - controlx, midy - controly, x[id], y[id]);
+    context.stroke();
+    context.fill();
   }
 }
